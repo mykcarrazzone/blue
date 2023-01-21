@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: paulo-api
+  namespace: paulo-api
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /metrics
+    prometheus.io/port: "8000"
+  labels:
+    app: paulo-api
+spec:
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  selector:
+    app: paulo-api
+  type: ClusterIP

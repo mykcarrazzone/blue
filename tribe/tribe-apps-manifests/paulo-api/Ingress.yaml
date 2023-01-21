@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: paulo-api
+  namespace: paulo-api
+  annotations:
+    konghq.com/plugins: 'rate-limiting-example'
+    konghq.com/https-redirect-status-code: '302'
+    konghq.com/protocols: https
+    konghq.com/strip-path: 'true'
+    kubernetes.io/ingress.class: kong-istio-internal
+spec:
+  rules:
+    - host: argocd-sre.owill.com.br
+      http:
+        paths:
+          - path: /paulo-api
+            pathType: Prefix
+            backend:
+              service:
+                name: paulo-api
+                port:
+                  number: 8000

@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: maykol-api-rollout
+spec:
+  replicas: 4
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: maykol-api-deployment
+  strategy:
+    canary:
+      analysis:
+        templates:
+        - templateName: maykol-api-error-rate
+        startingStep: 1 # delay starting analysis run until setWeight: 40%
+        # args:
+        # - name: service-name
+        #   value: maykol-api.maykol-api:80
+      steps:
+      - setWeight: 20
+      - pause: {duration: 120}
+      - setWeight: 40
+      - pause: {duration: 120}
+      - setWeight: 60
+      - pause: {duration: 60}
+      - setWeight: 80
+      - pause: {duration: 60}

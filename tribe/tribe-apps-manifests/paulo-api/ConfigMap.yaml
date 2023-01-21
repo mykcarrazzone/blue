@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: paulo-api-configmap
+  namespace: paulo-api
+data:
+  VAR1: VALUE1
+  VAR2: VALUE2
+  VAR3: VALUE3

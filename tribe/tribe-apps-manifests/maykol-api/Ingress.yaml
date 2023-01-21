@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: maykol-api-ingress
+  annotations:
+    # external-dns.alpha.kubernetes.io/hostname: maykol-sre.will-dev.local
+    konghq.com/https-redirect-status-code: '302'
+    konghq.com/protocols: https
+    konghq.com/strip-path: 'true'
+    kubernetes.io/ingress.class: kong-istio-internal
+spec:
+  rules:
+    - host: maykol-sre.owill.com.br
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: maykol-api-service
+                port:
+                  number: 80
+    # - host: maykol-sre.will-dev.local
+    #   http:
+    #     paths:
+    #       - path: /
+    #         pathType: Prefix
+    #         backend:
+    #           service:
+    #             name: maykol-api-service
+    #             port:
+    #               number: 80

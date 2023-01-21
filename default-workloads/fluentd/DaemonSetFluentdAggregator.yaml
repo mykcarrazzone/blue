@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd-aggregator-daemonset
+  namespace: fluentd
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  selector:
+    matchLabels:
+      name: fluentd-aggregator
+  template:
+    metadata:
+      labels:
+        name: fluentd-aggregator
+    spec:
+      containers:
+        - name: fluentd-aggregator-daemonset
+          image: >-
+            142401413602.dkr.ecr.sa-east-1.amazonaws.com/ecr-fluentd-aggregator:backoffice-api-mail-69cf8ff120947455f53698252ea1f1bbc3dd9839
+          ports:
+            - name: 24224tcp2
+              containerPort: 24224
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: fluentd-aggregator-secret
+          resources:
+            limits:
+              cpu: 400m
+              memory: 1Gi
+            requests:
+              cpu: 250m
+              memory: 600Mi  
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+          securityContext:
+            privileged: false
+            runAsNonRoot: false
+            readOnlyRootFilesystem: false
+            allowPrivilegeEscalation: false
+          stdin: true
+          tty: true
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      serviceAccountName: fluentd-aggregator
+      serviceAccount: fluentd-aggregator      
+      securityContext: {}
+      schedulerName: default-scheduler
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 0
+  revisionHistoryLimit: 10
